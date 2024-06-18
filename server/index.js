@@ -22,7 +22,7 @@ mongoose
     console.log("Not Connected");
   });
 
-const __dirname = path.resolve();
+const ____dirname_____ = path.resolve();
 
 const app = express();
 app.use(express.json());
@@ -34,9 +34,9 @@ app.use("/server/auth", authRouter);
 app.use("/server/listing", listingRouter);
 app.use("/server/booking", bookingRouter);
 
-app.use(express.static(path.join(__dirname, "/client/dist")));
+app.use(express.static(path.join(____dirname_____, "/client/dist")));
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+  res.sendFile(path.join(____dirname_____, "client", "dist", "index.html"));
 });
 
 const port = process.env.PORT || 3000;
