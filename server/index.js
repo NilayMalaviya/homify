@@ -35,10 +35,11 @@ app.use("/server/listing", listingRouter);
 app.use("/server/booking", bookingRouter);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
-app.get("*", (re, res) => {
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
 
-app.listen(3000, () => {
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
   console.log("server running on 3000!!!");
 });
