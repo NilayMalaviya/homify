@@ -1,4 +1,6 @@
+const User = require("../models/user");
 const Listing = require("../models/listing");
+const Booking = require("../models/booking");
 
 const createListing = async (req, res) => {
   try {
@@ -18,9 +20,33 @@ const deleteListing = async (req, res) => {
     return res.status(400).json({ message: "Unauthorized Access!!" });
 
   try {
-    await Listing.findByIdAndDelete(req.params.id);
+    const deletedListingId = req.params.id;
 
-    res.status(201).json({ message: "Your Listing has been deleted!" });
+    const usersToUpdate = await User.find({
+      $or: [
+        { wishList: deletedListingId },
+        { tripList: deletedListingId },
+        { propertyList: deletedListingId },
+        { reservationList: deletedListingId },
+      ],
+    });
+
+    const updateUserPromises = usersToUpdate.map(async (user) => {
+      const updatedLists = {
+        wishList: user.wishList.filter((id) => id !== deletedListingId),
+        tripList: user.tripList.filter((id) => id !== deletedListingId),
+        propertyList: user.propertyList.filter((id) => id !== deletedListingId),
+        reservationList: user.reservationList.filter((id) => id !== deletedListingId),
+      };
+
+      await User.findByIdAndUpdate(user._id, updatedLists);
+    });
+
+    await Promise.all(updateUserPromises);
+
+    await Listing.findByIdAndDelete(deletedListingId);
+
+    res.status(200).json({ message: "Your Listing has been deleted!" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

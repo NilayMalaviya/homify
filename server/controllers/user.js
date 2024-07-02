@@ -46,14 +46,44 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  if (req.user.id !== req.params.id)
-    return res.status(401).json({ message: "Unauthorized Access" });
   try {
-    await User.findByIdAndDelete(req.params.id);
+    const userToDelete = await User.findById(req.params.id);
+
+    if (!userToDelete) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
+    if (req.user.id !== req.params.id) {
+      return res.status(401).json({ message: "Unauthorized Access" });
+    }
+
+    const deletedUserId = req.params.id;
+
+    const usersToUpdate = await User.find({
+      $or: [
+        { wishList: { $in: userToDelete.propertyList } },
+        { tripList: { $in: userToDelete.propertyList } },
+        { reservationList: { $in: userToDelete.propertyList } },
+      ],
+    });
+
+    const updateUserPromises = usersToUpdate.map(async (user) => {
+      const updatedLists = {
+        wishList: user.wishList.filter((id) => !userToDelete.propertyList.includes(id)),
+        tripList: user.tripList.filter((id) => !userToDelete.propertyList.includes(id)),
+        reservationList: user.reservationList.filter((id) => !userToDelete.propertyList.includes(id)),
+      };
+
+      await User.findByIdAndUpdate(user._id, updatedLists);
+    });
+
+    await Promise.all(updateUserPromises);
+
+    await User.findByIdAndDelete(deletedUserId);
+
     res.clearCookie("access_token");
     res.status(200).json({ message: "User deleted successfully!!!" });
   } catch (error) {
-    return res.status(401).json({ message: "Unauthorized Access" });
+    res.status(500).json({ message: error.message });
   }
 };
 
