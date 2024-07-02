@@ -187,20 +187,21 @@ export default function UpdateListing() {
             <h3 className="text-lg text-gray-600 font-semibold">
               Which of these categories best describes your place?
             </h3>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 px-8">
+            <div className="flex flex-wrap justify-center gap-4 mt-4 px-3 sm:px-8">
               {categories.map((category) => (
                 <button
                   type="button"
                   key={category.label}
-                  className={`flex flex-col items-center p-2 rounded-xl shadow border border-gray-400 ${
+                  className={`flex flex-col items-center justify-center p-2 rounded-xl shadow border border-gray-400 ${
                     selectedCategory === category.label
                       ? "ring-2 ring-slate-700 shadow-lg"
                       : ""
                   }`}
                   onClick={() => setSelectedCategory(category.label)}
+                  style={{ minWidth: "120px" }}
                 >
                   {renderIcon(category.icon)}
-                  <span className="mt-2 text-sm text-gray-800">
+                  <span className="mt-2 text-sm text-gray-800 text-center">
                     {category.label}
                   </span>
                 </button>
@@ -388,21 +389,26 @@ export default function UpdateListing() {
             <h3 className="text-lg text-gray-600 font-semibold">
               Tell guests what your place has to offer
             </h3>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 px-3 sm:px-8">
               {facilities.map((facility) => (
                 <button
                   type="button"
                   key={facility.name}
                   className={`flex flex-col items-center p-2 rounded-xl shadow border border-gray-400 ${
-                    selectedAmenities.findIndex(
-                      (name) => name === facility.name
-                    ) !== -1
+                    selectedAmenities.includes(facility.name)
                       ? "ring-2 ring-slate-700 shadow-lg"
                       : ""
                   }`}
-                  onClick={() =>
-                    setSelectedAmenities([...selectedAmenities, facility.name])
-                  }
+                  onClick={() => {
+                    const updatedAmenities = selectedAmenities.includes(
+                      facility.name
+                    )
+                      ? selectedAmenities.filter(
+                          (name) => name !== facility.name
+                        )
+                      : [...selectedAmenities, facility.name];
+                    setSelectedAmenities(updatedAmenities);
+                  }}
                 >
                   {renderIcon(facility.icon)}
                   <span className="mt-2 text-sm text-gray-800">
@@ -507,18 +513,18 @@ export default function UpdateListing() {
             <h3 className="text-lg text-gray-600 font-semibold mb-2">
               Now, set your PRICE
             </h3>
-            <div className="flex flex-row items-center px-8">
-              <span className="px-3 text-2xl">₹</span>
+            <div className="flex flex-row items-center sm:px-8">
+              <span className="pr-3 sm:px-3 text-2xl">₹</span>
               <input
                 type="number"
                 id="price"
                 min="1"
                 required
-                className="p-3 border border-gray-300 rounded-lg"
+                className="p-2 sm:p-3 border border-gray-300 rounded-lg"
                 onChange={handleChange}
                 value={formData.price}
               />
-              <span className="px-3 text-2xl">/ night</span>
+              <span className="pl-3 sm:px-3 text-lg sm:text-2xl">/ night</span>
             </div>
           </div>
         </div>
