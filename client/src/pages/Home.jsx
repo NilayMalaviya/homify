@@ -25,7 +25,7 @@ export default function Home() {
       const data = await response.json();
       dispatch(setListings(data));
       setLoading(false);
-      
+
       if (data.length > 8) {
         setShowMore(true);
       } else {
@@ -41,13 +41,15 @@ export default function Home() {
   }, [selectedCategory]);
 
   const renderIcon = (IconComponent) => {
-    return <IconComponent className="w-16 h-20" />;
+    return <IconComponent className="w-6 h-10 sm:w-16 sm:h-20" />;
   };
 
   const onShowMoreClick = async () => {
     const numberOfListings = listings.length;
     const startIndex = numberOfListings;
-    const res = await fetch(`/server/listing/get?category=${selectedCategory}&&startInd=${startIndex}`);
+    const res = await fetch(
+      `/server/listing/get?category=${selectedCategory}&&startInd=${startIndex}`
+    );
     const data = await res.json();
     if (data.length < 9) {
       setShowMore(false);
@@ -87,17 +89,17 @@ export default function Home() {
           loading...
         </p>
       ) : (
-        <div className="m-16">
-          <p className="text-slate-700 my-16 text-4xl pb-4 text-center font-semibold border-b-4  border-slate-700">
+        <div className="m-4 sm:m-8 lg:m-16">
+          <p className="text-slate-700 my-8 text-3xl lg:text-4xl pb-4 text-center font-semibold border-b-4  border-slate-700">
             Explore our top categories
           </p>
 
-          <div className="flex flex-wrap gap-8 gap-y-12 justify-between">
+          <div className="flex flex-wrap gap-4 sm:gap-8 justify-center">
             {categories.map((category) => (
               <button
                 type="button"
                 key={category.label}
-                className={`flex flex-col items-center p-6 rounded-xl shadow-md hover:scale-125 duration-100 ${
+                className={`flex flex-col items-center p-2 sm:p-6 rounded-xl shadow-md hover:scale-110 duration-100 ${
                   selectedCategory === category.label
                     ? "ring-4 ring-slate-700 shadow-lg"
                     : ""
@@ -105,15 +107,15 @@ export default function Home() {
                 onClick={() => setSelectedCategory(category.label)}
               >
                 {renderIcon(category.icon)}
-                <span className="mt-2 text-xl text-gray-800">
+                <span className="mt-2 text-lg sm:text-xl text-gray-800">
                   {category.label}
                 </span>
               </button>
             ))}
           </div>
 
-          <div className="flex flex-col my-10 mx-7">
-            <div className="flex flex-wrap gap-8">
+          <div className="flex flex-col my-8 sm:my-10 mx-4 sm:mx-7">
+            <div className="flex flex-wrap gap-4 sm:gap-8">
               {listings.map((listing) => (
                 <ListingItem
                   listing={listing}
@@ -124,10 +126,11 @@ export default function Home() {
               ))}
             </div>
           </div>
+
           {showMore && (
             <button
               onClick={onShowMoreClick}
-              className="text-slate-800 font-semibold text-2xl hover:underline text-center w-full"
+              className="text-slate-800 font-semibold text-lg sm:text-2xl hover:underline text-center w-full"
             >
               Show more
             </button>
